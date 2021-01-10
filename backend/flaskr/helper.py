@@ -8,3 +8,12 @@ def paginate_questions(request, selection):
   current_questions = questions[start:end]
 
   return current_questions
+
+def is_valid_question(body):
+  attrs = ["question", "answer", "difficulty", "category"]
+
+  for attr in attrs:
+    if not attr in body or body[attr] is None:
+      return False
+
+  return True

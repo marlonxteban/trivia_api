@@ -131,7 +131,48 @@ class TriviaTestCase(unittest.TestCase):
         self.assertFalse(data["success"])
         self.assertEqual(data["message"], 'resource not found')
 
+    def test_create_question(self):
+        new_question = {
+            "question": "is this a new question?",
+            "answer": "yes",
+            "category": 1,
+            "difficulty": 1
+        }
 
+        res = self.client().post("/questions", json=new_question)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data["success"])
+        self.assertTrue(data["created_question"])
+
+    def test_422_missing_category(self):
+        new_question = {
+            "question": "is this a new question?",
+            "answer": "yes",
+            "difficulty": 1
+        }
+
+        res = self.client().post("/questions", json=new_question)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertFalse(data["success"])
+        self.assertEqual(data["message"], "unprocessable")
+
+    def test_422_missing_difficulty(self):
+        new_question = {
+            "question": "is this a new question?",
+            "answer": "yes",
+            "category": 1
+        }
+
+        res = self.client().post("/questions", json=new_question)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertFalse(data["success"])
+        self.assertEqual(data["message"], "unprocessable")
 
 # Make the tests conveniently executable
 if __name__ == "__main__":

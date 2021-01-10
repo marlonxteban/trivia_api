@@ -115,6 +115,30 @@ def create_app(test_config=None):
   of the questions list in the "List" tab.  
   '''
 
+  @app.route("/questions", methods=["POST"])
+  def create_question():
+    body = request.get_json()
+
+    if not helper.is_valid_question(body):
+      abort(422)
+
+    question = body.get("question")
+    answer = body.get("answer")
+    difficulty = body.get("difficulty")
+    category_id = body.get("category")
+
+    try:
+      new_question = Question(question=question, answer=answer, difficulty=difficulty, category_id=category_id)
+      new_question.insert()
+
+      return jsonify({
+      "status_code": 200,
+      "success": True,
+      "created_question": new_question.id
+      })
+    except:
+      abort(422)
+
   '''
   @TODO: 
   Create a POST endpoint to get questions based on a search term. 
