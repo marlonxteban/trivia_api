@@ -1,6 +1,7 @@
 import os
 from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import json
 
 database_name = "trivia"
@@ -18,6 +19,7 @@ def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
+    migrate = Migrate(app, db)
     db.create_all()
 
 '''
@@ -30,13 +32,14 @@ class Question(db.Model):
   id = Column(Integer, primary_key=True)
   question = Column(String)
   answer = Column(String)
-  category = Column(String)
+  category_id = Column(Integer, db.ForeignKey('categories.id', ondelete='CASCADE'))
+  category = db.relationship('Category', backref=db.backref('questions', lazy=True))
   difficulty = Column(Integer)
 
-  def __init__(self, question, answer, category, difficulty):
+  def __init__(self, question, answer, category_id, difficulty):
     self.question = question
     self.answer = answer
-    self.category = category
+    self.category_id = category_id
     self.difficulty = difficulty
 
   def insert(self):
@@ -55,7 +58,7 @@ class Question(db.Model):
       'id': self.id,
       'question': self.question,
       'answer': self.answer,
-      'category': self.category,
+      'category': self.category_id,
       'difficulty': self.difficulty
     }
 
