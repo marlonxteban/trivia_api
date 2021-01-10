@@ -93,6 +93,27 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(len(data["categories"]), total_categories_expected)
         self.assertTrue(lambda x: x["type"] == "dragon ball" in data["categories"])
 
+    def test_get_paginated_questions(self):
+        total_questions_expected = 15
+        total_paginated_questions_expected = 10
+        total_categories_expected = 3
+        res = self.client().get("/questions")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data["success"])
+        self.assertEqual(data["total_questions"], total_questions_expected)
+        self.assertEqual(len(data["questions"]), total_paginated_questions_expected)
+        self.assertEqual(len(data["categories"]), total_categories_expected)
+
+    def test_404_sent_invalid_page(self):
+        res = self.client().get("/questions?page=1000")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertFalse(data["success"])
+        self.assertEqual(data["message"], 'resource not found')
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
