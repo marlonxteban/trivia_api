@@ -174,6 +174,41 @@ class TriviaTestCase(unittest.TestCase):
         self.assertFalse(data["success"])
         self.assertEqual(data["message"], "unprocessable")
 
+    def test_search_soccer_in_question(self):
+        search_term = {
+            "searchTerm":"soccer"
+        }
+        expected_questions = 4
+        res = self.client().post("/questions/search", json=search_term)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data["success"])
+        self.assertEqual(data["totalQuestions"], expected_questions)
+        self.assertEqual(len(data["questions"]), expected_questions)
+
+    def test_404_no_results_for_searchTerm(self):
+        search_term = {
+            "searchTerm":"parangaricutirimicuaro"
+        }
+        res = self.client().post("/questions/search", json=search_term)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertFalse(data["success"])
+        self.assertEqual(data["message"], 'resource not found')
+
+    def test_400_no_searchTerm(self):
+        search_term = {
+            "searchTerm":None
+        }
+        res = self.client().post("/questions/search", json=search_term)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertFalse(data["success"])
+        self.assertEqual(data["message"], 'bad request')
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
