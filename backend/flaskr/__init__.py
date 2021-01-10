@@ -5,6 +5,7 @@ from flask_cors import CORS
 import random
 
 from models import setup_db, Question, Category
+from .helper import *
 
 QUESTIONS_PER_PAGE = 10
 
@@ -33,12 +34,12 @@ def create_app(test_config=None):
   '''
   @app.route("/categories")
   def get_categories():
-    categories = Category.query.order_by(Category.id.desc()).all()
+    categories = Category.query.order_by(Category.id).all()
     return jsonify({
       "status_code": 200,
       "total": len(categories),
       "success": True,
-      "categories": [ category.format() for category in categories]
+      "categories": {category.id : category.type for category in categories}
       })
 
   '''
@@ -53,8 +54,22 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
+  @app.route("/questions")
+  def get_questions():
+    selection = Question.query.order_by(Question.id).all()
+    current_questions = helper.paginate_questions(request, selection)
+    categories = Category.query.order_by(Category.id).all()
+    if not current_questions:
+      abort(404)
 
-  
+    return jsonify({
+      "status_code": 200,
+      "total_questions": len(selection),
+      "success": True,
+      "categories": {category.id : category.type for category in categories},
+      "current_category": None,
+      "questions": current_questions
+      })
 
   '''
   @TODO: 

@@ -28,15 +28,26 @@ class TriviaTestCase(unittest.TestCase):
         question8 = Question(question="saiyan prince", answer="vegeta", category_id=2, difficulty=3)
         question9 = Question(question="goku mom name", answer="gine", category_id=2, difficulty=5)
         question10 = Question(question="frieza dad name", answer="cold", category_id=2, difficulty=4)
-        
-        questions = [question1, question2, question3, question4, question5, question6, question7, question8, question9, question10]
 
-        category1.questions = questions[:6]
-        category2.questions = questions[6:]
+        category3 = Category(type="latam sports")
+        question11 = Question(question="best international soccer team from south america", answer="boca", category_id=3, difficulty=1)
+        question12 = Question(question="best ecuadorian soccer team", answer="ldu", category_id=3, difficulty=2)
+        question13 = Question(question="2nd best ecuadorian soccer team", answer="idv", category_id=3, difficulty=3)
+        question14 = Question(question="Ecuadorian olympics gold winner in Athlanta '96", answer="jefferson perez", category_id=3, difficulty=5)
+        question15 = Question(question="2nd best soccer team in argentina", answer="river", category_id=3, difficulty=4)
+
+        questions1 = [question1, question2, question3, question4, question5]
+        questions2 = [question6, question7, question8, question9, question10]
+        questions3 = [question11, question12, question13, question14, question15]
+
+        category1.questions = questions1
+        category2.questions = questions2
+        category3.questions = questions3
 
         try:
             db.session.add(category1)
             db.session.add(category2)
+            db.session.add(category3)
             db.session.commit()
         except:
             db.session.rollback()
@@ -72,13 +83,14 @@ class TriviaTestCase(unittest.TestCase):
     """
 
     def test_get_categories(self):
+        total_categories_expected = 3
         res = self.client().get("/categories")
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data["total"], 2)
+        self.assertEqual(data["total"], total_categories_expected)
         self.assertTrue(data["success"])
         self.assertTrue(len(data["categories"]))
-        self.assertEqual(len(data["categories"]), 2)
+        self.assertEqual(len(data["categories"]), total_categories_expected)
         self.assertTrue(lambda x: x["type"] == "dragon ball" in data["categories"])
 
 
