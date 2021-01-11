@@ -46,6 +46,11 @@ If tables are not created yet:
 export FLASK_APP=flaskr
 flask db upgrade
 ```
+
+## Notes:
+Scripts to insert demo data are provided in folder `database`, run in order: `00` first then `01`.
+
+
 # Endpoints
 
 ## GET '/categories'
