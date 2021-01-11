@@ -189,7 +189,7 @@ def create_app(test_config=None):
       abort(404)
 
     return jsonify({
-      "status_code": 200,
+        "status_code": 200,
         "success": True,
         "questions": [ question.format() for question in category.questions],
         "totalQuestions": len(category.questions),
@@ -208,6 +208,38 @@ def create_app(test_config=None):
   and shown whether they were correct or not. 
   '''
 
+  @app.route("/quizzes", methods=["POST"])
+  def get_next_question():
+    body = request.get_json()
+    previous_questions = body.get("previous_questions", None)
+    quiz_category = body.get("quiz_category", None)
+
+    try:
+      query = build_quiz_query(body)
+      results = query.all()
+      current_question = random.choice(results)
+
+      return jsonify({
+        "status_code": 200,
+        "success": True,
+        "previousQuestions":previous_questions,
+        "question": current_question.format()
+      })
+    except:
+      abort(400)
+
+  def build_quiz_query(body):
+    previous_questions = body.get("previous_questions", None)
+    quiz_category = body.get("quiz_category", None)
+
+    query = Question.query
+
+    if quiz_category and quiz_category["id"]:
+      query = query.filter(Question.category_id == quiz_category["id"])
+    if previous_questions:
+      query = query.filter(~Question.id.in_(previous_questions))
+
+    return query
   '''
   @TODO: 
   Create error handlers for all expected errors 

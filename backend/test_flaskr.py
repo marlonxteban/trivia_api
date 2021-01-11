@@ -232,6 +232,46 @@ class TriviaTestCase(unittest.TestCase):
         self.assertFalse(data["success"])
         self.assertEqual(data["message"], 'resource not found')
 
+    def test_quizzes_return_different_question_at_time_no_category(self):
+        params = {
+            "previous_questions": [],
+            "quiz_category": None
+        }
+
+        res = self.client().post("/quizzes", json=params)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data["success"])
+        self.assertFalse(data["previousQuestions"])
+        self.assertTrue(data["question"])
+
+        params2 = {
+            "previous_questions": [data["question"]["id"]],
+            "quiz_category": None
+        }
+        res2 = self.client().post("/quizzes", json=params2)
+        data2 = json.loads(res2.data)
+
+        self.assertEqual(res2.status_code, 200)
+        self.assertTrue(data2["success"])
+        self.assertEqual(data2["previousQuestions"], params2["previous_questions"])
+        self.assertTrue(data2["question"])
+        self.assertNotEqual(data2["question"], data["question"])
+
+    def test_400_sent_invalid_category(self):
+        params = {
+            "previous_questions": [],
+            "quiz_category": "bad"
+        }
+
+        res = self.client().post("/quizzes", json=params)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertFalse(data["success"])
+        self.assertEqual(data["message"], 'bad request')
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
