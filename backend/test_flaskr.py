@@ -60,7 +60,10 @@ class TriviaTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "trivia_test"
-        self.database_path = "postgres://{}@{}/{}".format('marlon:admin','localhost:5442', self.database_name)
+        self.database_path = "postgres://{}/{}".format('localhost:5432', self.database_name)
+        #change database_path with the following to use the docker environment
+        #self.database_path = "postgres://{}@{}/{}".format('marlon:admin','localhost:5442', self.database_name)
+        #changed port from 5432 to 5442 to use local container environment
         setup_db(self.app, self.database_path)
 
         # binds the app to the current context

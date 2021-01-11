@@ -5,7 +5,9 @@ from flask_migrate import Migrate
 import json
 
 database_name = "trivia"
-database_path = "postgres://{}@{}/{}".format('marlon:admin','localhost:5442', database_name)
+database_path = "postgres://{}/{}".format('localhost:5432', database_name)
+#change database_path with the following to use the docker environment
+#database_path = "postgres://{}@{}/{}".format('marlon:admin','localhost:5442', database_name)
 #changed port from 5432 to 5442 to use local container environment
 
 db = SQLAlchemy()
