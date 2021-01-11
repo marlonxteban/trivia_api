@@ -1,0 +1,30 @@
+version: "2.3"
+services:
+  project02-db:
+    image: postgres:latest
+    mem_limit: 1536MB
+    mem_reservation: 1G
+    environment:
+      POSTGRES_USER: marlon
+      POSTGRES_PASSWORD: admin
+    ports:
+    - "5442:5432"
+    networks:
+    - project_network
+    volumes:
+    - db-data:/d/Learning/FullStackWebDevelopment/ProjectCourse02/postgres/volumes
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: marlonxteban@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+    - "8889:80"
+    networks:
+    - project_network
+networks:
+  project_network:
+    driver: bridge
+ 
+volumes:
+  db-data:
