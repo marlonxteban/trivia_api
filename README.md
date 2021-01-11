@@ -59,7 +59,14 @@ flask db upgrade
       "status_code": 200,
       "total": 1,
       "success": "True",
-      "categories": {"1" : "Science", "2" : "Sports"}
+      "categories": {
+		"1": "Science",
+		"2": "Art",
+		"3": "Geography",
+		"4": "History",
+		"5": "Entertainment",
+		"6": "Sports"
+	  }
     }
 ```
 
@@ -69,7 +76,7 @@ flask db upgrade
 - Returns: An object that contains the array of paginated questions, the object of categories, the total number of qustions.
 ### response example
 ```json
-    {
+{
 	"categories": {
 		"1": "Science",
 		"2": "Art",
@@ -145,25 +152,119 @@ flask db upgrade
 	"total_questions": 20
 }
 ```
-
+## DELETE '/questions/<int:id>'
+- Delete question using id
+- Request Arguments: `id` integer.
+- Returns: An object that contains: `status_code`, `success`, `total_questions` (after delete).
+### response example
+```json
+{
+	"status_code": 200,
+	"success": true,
+	"total_questions": 19
+}
 ```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
 
-Endpoints
-GET '/categories'
-GET ...
-POST ...
-DELETE ...
-
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
-
+## POST '/questions'
+- Create new question
+- Request Arguments: `question` string, `answer`: string, `difficulty`: integer, `category`: integer (category id).
+- Returns: An object that contains: `status_code`, `success`, `created_question` (id of new question).
+### request body example
+```json
+{
+	"question": "Who is this?",
+	"answer": "me",
+	"difficulty": 1,
+	"category": 5
+}
 ```
+### response example
+```json
+{
+	"created_question": 3,
+	"status_code": 200,
+	"success": true
+}
+```
+
+## POST '/questions/search'
+- Fetches an array of questions that accomplishes a search term.
+- Request Arguments: `searchTerm` string.
+- Returns: An object that contains: `status_code`, `success`, `questions`, `totalQuestions`.
+### request body example
+```json
+{"searchTerm":"actor"}
+```
+### response example
+```json
+{
+	"currentCategory": null,
+	"questions": [{
+		"answer": "Apollo 13",
+		"category": 5,
+		"difficulty": 4,
+		"id": 4,
+		"question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+	}],
+	"status_code": 200,
+	"success": true,
+	"totalQuestions": 1
+}
+```
+
+## GET '/categories/<int:id>/questions'
+- Fetches an array of questions that accomplishes the category type.
+- Request Arguments: `id` integer.
+- Returns: An object that contains: `status_code`, `success`, `questions`, `totalQuestions`, `currentCategory`.
+
+### response example
+```json
+{
+	"currentCategory": 1,
+	"questions": [{
+		"answer": "The Liver",
+		"category": 1,
+		"difficulty": 4,
+		"id": 20,
+		"question": "What is the heaviest organ in the human body?"
+	}, {
+		"answer": "Blood",
+		"category": 1,
+		"difficulty": 4,
+		"id": 22,
+		"question": "Hematology is a branch of medicine involving the study of what?"
+	}],
+	"status_code": 200,
+	"success": true,
+	"totalQuestions": 2
+}
+```
+
+## POST '/quizzes'
+- Fetches one question to play the trivia filtered by category and previous questions.
+- Request Arguments: `previous_questions` Array of ids of questions to filter previous answered questions, `quiz_category` json object that contains type and Id of a category. If not arguments are not sent the question should be of any avaliable category. 
+- Returns: An object that contains: `previousQuestions`, `success`, `status_code`, `question`.
+### request body example
+```json
+{
+	"previous_questions": [],
+	"quiz_category": {
+		"type": "Science",
+		"id": "1"
+	}
+}
+```
+### response example
+```json
+{
+	"previousQuestions": [],
+	"question": {
+		"answer": "Blood",
+		"category": 1,
+		"difficulty": 4,
+		"id": 22,
+		"question": "Hematology is a branch of medicine involving the study of what?"
+	},
+	"status_code": 200,
+	"success": true
+}
