@@ -12,7 +12,17 @@ Project 02 in full stack web developer nanodegree
 - used docker to setup and run the database
 
 
-## Database Setup (skip this if use base project database setup)
+## Database Setup (using dump file)
+
+In folder `database` exists the file `trivia.sql`, use this file to restore the database, its because there are changes in the model:
+
+- 1. Create database trivia in psql
+- 2. Run:
+```bash
+psql trivia < trivia.psql
+```
+
+## Database Setup (skip this if use base trivia.sql)
 
 For this step (If want to use docker) you need docker[docker](https://www.docker.com/) and docker-compose.
 
