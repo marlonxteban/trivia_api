@@ -4,7 +4,6 @@ Project 02 in full stack web developer nanodegree
 # Main Changes with the base project
 
 - Updated requirements.txt
-- Added migrations
 - Added relationship between categories and questions using category id
 - Added test data on unit test file setUp
 - Drop test tables on unit test file tearDown
@@ -14,13 +13,27 @@ Project 02 in full stack web developer nanodegree
 
 ## Database Setup (using dump file)
 
-In folder `database` exists the file `trivia.sql`, use this file to restore the database, its because there are changes in the model:
+### Important Delete previos existing trivia database and create an empty one
 
-- 1. Create database trivia in psql
-- 2. Run:
+In folder `database` exists the file `bktrivia.sql`, use this file to restore the database, its because there are changes in the model:
+
+- Run:
 ```bash
-psql trivia < trivia.psql
+psql trivia < bktrivia.psql
 ```
+
+### Notes:
+I am using windows so I don't know if the dump file works well in other OS. The previos command should fail in windows because the Syntax in cmd or powershell, so if the previous command fails on create the database please follow the next steps:
+
+- 1. Delete trivia database and create and empty one.
+- 2. Run the next command using the file `bktrivia.dump` in folder `database`:
+```bash
+pg_restore -U postgres -d trivia bktrivia.dump
+```
+Where:
+* `postgres` is the user of the database (in windows is required to set a password for postgres user when install psotgres)
+* `trivia` is the name of the database to be restored
+* `bktrivia.dump` is the backup of the database as a .dump file
 
 ## Database Setup (skip this if use base trivia.sql)
 
@@ -48,8 +61,6 @@ look for `IPAddress:xxx.xxx.xxx.xxx`
 - Create databases `trivia` and `trivia_test`
 
 # Run the server
-
-If tables are not created yet:
 
 - From folder `backend/flaskr/` run
 ```bash
