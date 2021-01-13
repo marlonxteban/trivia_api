@@ -5,7 +5,6 @@ from flask_cors import CORS
 import random
 from werkzeug.exceptions import HTTPException
 
-
 from models import setup_db, Question, Category
 from .helper import *
 
@@ -136,9 +135,11 @@ def create_app(test_config=None):
         category_id = body.get("category")
 
         try:
+            last_question = Question.query.order_by(Question.id.desc()).first()
             new_question = Question(question=question, answer=answer,
                                     difficulty=difficulty,
                                     category_id=category_id)
+            new_question.id = last_question.id + 1
             new_question.insert()
 
             return jsonify({
@@ -229,13 +230,16 @@ def create_app(test_config=None):
         try:
             query = build_quiz_query(body)
             results = query.all()
-            current_question = random.choice(results)
+            current_question = None
+            if results:
+                question = random.choice(results)
+                current_question = question.format()
 
             return jsonify({
                 "status_code": 200,
                 "success": True,
                 "previousQuestions": previous_questions,
-                "question": current_question.format()
+                "question": current_question
             })
         except:
             abort(400)
